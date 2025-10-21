@@ -37,7 +37,11 @@ document.addEventListener("DOMContentLoaded", () => {
     messageInput.focus();
 
     try {
+<<<<<<< HEAD
       const res = await fetch("http://localhost:3000/Comunidade/Mensagem", {
+=======
+      const res = await fetch("http://192.168.1.10:3000/Comunidade/Mensagem", {
+>>>>>>> e7d85d78ca266eb093f81fc1b02df9b665c78f9c
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ usuario_id, mensagem: text }),
@@ -46,7 +50,11 @@ document.addEventListener("DOMContentLoaded", () => {
       if (res.ok) 
       {              
         // chatContainer.remove()
+<<<<<<< HEAD
         appendMessage(text, "Você");
+=======
+        appendMessage(text, "Laís");
+>>>>>>> e7d85d78ca266eb093f81fc1b02df9b665c78f9c
       }
     
     } catch (err) {
@@ -65,7 +73,10 @@ document.addEventListener("DOMContentLoaded", () => {
   // Buscar mensagens
   async function loadMessages() {
     try {
+<<<<<<< HEAD
   
+=======
+>>>>>>> e7d85d78ca266eb093f81fc1b02df9b665c78f9c
       const res = await fetch("http://localhost:3000/Comunidade/Mensagem");
       const mensagens = await res.json();
       if(mensagens.length > 0){
@@ -88,7 +99,11 @@ document.addEventListener("DOMContentLoaded", () => {
           const name =
             msg.usuario_id == usuario_id
               ? "Você"
+<<<<<<< HEAD
               : `Usuário ${msg.usuario_id}`;
+=======
+              : Usuário `${msg.usuario_id};`
+>>>>>>> e7d85d78ca266eb093f81fc1b02df9b665c78f9c
           appendMessage(msg.mensagem, name);
           lastMessages.push(msg);
         }
@@ -144,7 +159,11 @@ document.addEventListener("DOMContentLoaded", () => {
     // Atualizar nota (PUT)
     const updateNote = debounce(async () => {
       try {
+<<<<<<< HEAD
         await fetch(`http://localhost:3000/Notas/${nota.id}`, {
+=======
+        await fetch(`http://192.168.1.10:3000/Notas/${nota.id}`, {
+>>>>>>> e7d85d78ca266eb093f81fc1b02df9b665c78f9c
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ conteudo: textarea.value }),
@@ -202,7 +221,11 @@ document.addEventListener("DOMContentLoaded", () => {
   // Adicionar nova nota
   addNoteBtn.addEventListener("click", async () => {
     try {
+<<<<<<< HEAD
       const res = await fetch("http://localhost:3000/Notas", {
+=======
+      const res = await fetch("http://192.168.1.10:3000/Notas", {
+>>>>>>> e7d85d78ca266eb093f81fc1b02df9b665c78f9c
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ usuario_id, conteudo: "" }),
@@ -218,7 +241,11 @@ document.addEventListener("DOMContentLoaded", () => {
   async function loadNotes() {
     notesContainer.innerHTML = "";
     try {
+<<<<<<< HEAD
       const res = await fetch(`http://localhost:3000/Notas/${usuario_id}`);
+=======
+      const res = await fetch(`http://192.168.1.10:3000/Notas/${usuario_id}`);
+>>>>>>> e7d85d78ca266eb093f81fc1b02df9b665c78f9c
       const notas = await res.json();
 
       if (notas.length === 0) {
