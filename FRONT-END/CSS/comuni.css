@@ -116,7 +116,7 @@ header .logo img:hover {
 
 /* BOTÃO TROCAR */
 #Trocar {
-  background: transparent;
+  background: #fff;
   border: none;
   cursor: pointer;
   transition: transform 0.3s ease;
