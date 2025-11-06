@@ -5,51 +5,86 @@
   box-sizing: border-box;
 }
 
+.chat-container {
+  width: 100vw; /* ocupa toda a largura da tela */
+  margin: 0;
+  padding: 0;
+  overflow-y: auto; /* rolagem vertical */
+  box-sizing: border-box;
+ }
+
+/* Estilo mais bonito para a barra */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #555; /* cor do “botão” */
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #333;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+
 main{
   display: flex;
   justify-content: center;
   height: 50%;
 }
-
-/* 🩵 ESTILO GERAL */
+.message-info{
+  color: black;
+  font-size: .6rem;
+  margin-top: 10px;
+}
 body {
   font-family: "Poppins", Arial, sans-serif;
-  background: linear-gradient(135deg, #7db9e8,);
-  color: #fff;
+background-color:#f1eee5; 
+ color: #fff;
   display: flex;
   flex-direction: column;
   height: 100vh;
   overflow-x: hidden;
 }
 
-/* 🔹 HEADER */
+/* Balãozinho do nome */
+.bubble {
+  position: relative;
+  padding-top: 50px; /* espaço para o nome */
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  background-color: #27187e;
+}
+
+.bubble .username {
+  position: absolute;
+  top: 5px; /* acima da bolha */
+  left: 10px;
+  background-color: black; /* cor do balão */
+  color: black;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  pointer-events: none;
+}
+
+
 header {
- height: 100px;
-  background-color: #0466af;
+  height: 120px;
+  background-color: #27187e;
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 10px 15px;
 }
-
-header .logo {
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-header .logo img {
-  border-radius: 50%;
-  transition: transform 0.3s ease;
-}
-
-header .logo img:hover {
-  transform: rotate(10deg) scale(1.05);
-}
-
-/* MENU HAMBURGUER */
 .menu-container {
   position: relative;
 }
@@ -66,31 +101,30 @@ header .logo img:hover {
   transition: transform 0.3s ease;
 }
 
-.hamburger:hover {
-  transform: scale(1.2);
-}
-
 .menu-items {
-  display: none;
+   display: none;
   flex-direction: column;
   position: absolute;
-  top: 70px;
-  left: 10px;
+  top: 40px;
+  left: 5px;
   background-color: #fff;
   color: #000;
   border-radius: 10px;
-  padding: 10px;
+  padding: 18px;
   gap: 8px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+  border: 2px solid #01213d;
+  box-shadow: 0px 5px 10px #01213d;
   z-index: 999;
 }
 
 .menu-items li {
-  list-style: none;
+ list-style: none;
   border-bottom: 1px solid #ccc;
+  gap: 10px;
+  margin-bottom: 10px;
   padding: 8px;
-  font-size: 18px;
-  transition: background 0.3s ease;
+  font-size: 20px;
+  text-align: center;
 }
 
 .menu-items li:hover {
@@ -101,7 +135,6 @@ header .logo img:hover {
 .menu-items a {
   text-decoration: none;
   color: #000;
-  display: block;
 }
 
 /* Abrir menu com clique */
@@ -109,10 +142,7 @@ header .logo img:hover {
   display: flex;
 }
 
-/* Também abre ao hover (opcional) */
-.menu-container:hover .menu-items {
-  display: flex;
-}
+
 
 /* BOTÃO TROCAR */
 #Trocar {
@@ -139,10 +169,10 @@ header .logo img:hover {
 
 /* 💬 CHAT */
 .chat-container {
-  width: 50%;
+  width: 100%;
   height: 34rem;
   overflow-y: auto;
-  padding: 20px;
+  padding: 10px 420px;
   display: flex;
   flex-direction: column;
   gap: 20px;

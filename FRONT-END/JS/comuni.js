@@ -5,7 +5,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const usuario_id = localStorage.getItem("id");
   const usuario_nome = localStorage.getItem("nome");
 
-
+  if (!usuario_id || !usuario_nome) {
+    alert("Você precisa fazer login primeiro!");
+    window.location.replace("./login.html");
+    return;
+  }
 
   // -------------------------
   // ELEMENTOS DO CHAT
@@ -20,22 +24,40 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function appendMessage(text, userName = "Usuário", id) {
-    const isUsuario = id == usuario_id || id == undefined;
-    const msg = document.createElement("div");
-    msg.className = isUsuario ? "message-dir" : "message-esq";
+    const usuario = localStorage.getItem("id");
+    if (id == usuario) {
+      const msg = document.createElement("div");
+      msg.className = "message-dir";
 
-    const bubble = document.createElement("div");
-    bubble.className = "bubble";
-    bubble.textContent = text;
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+      bubble.textContent = text;
 
-    const info = document.createElement("div");
-    info.className = "message-info";
-    info.textContent = userName;
+      const info = document.createElement("div");
+      info.className = "message-info";
+      info.textContent = userName;
 
-    msg.appendChild(bubble);
-    msg.appendChild(info);
-    chatContainer.appendChild(msg);
-    chatContainer.scrollTop = chatContainer.scrollHeight;
+      msg.appendChild(bubble);
+      msg.appendChild(info);
+      chatContainer.appendChild(msg);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    } else {
+      const msg = document.createElement("div");
+      msg.className = "message-esq";
+
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+      bubble.textContent = text;
+
+      const info = document.createElement("div");
+      info.className = "message-info";
+      info.textContent = userName;
+
+      msg.appendChild(bubble);
+      msg.appendChild(info);
+      chatContainer.appendChild(msg);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
   }
 
   async function sendMessage() {
@@ -77,7 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (!Array.isArray(mensagens)) return;
 
-      chatContainer.innerHTML = ""; // limpa o chat
+      chatContainer.innerHTML = "";
       mensagens.forEach((msg) => {
         const name =
           msg.usuario_id == usuario_id
@@ -120,7 +142,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (event.target === notesModal) notesModal.style.display = "none";
   });
 
-  function debounce(func, delay = 800) {
+  function debounce(func, delay = 600) {
     let timer;
     return (...args) => {
       clearTimeout(timer);
@@ -129,96 +151,119 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function createNote(nota) {
-  const emptyMsg = notesContainer.querySelector(".empty-msg");
-  if (emptyMsg) emptyMsg.remove();
-
-  const note = document.createElement("div");
-  note.classList.add("note");
-
-  const textarea = document.createElement("textarea");
-  textarea.value = nota.conteudo || "";
-
-  // Função que cria ou atualiza a nota
-  const saveNote = debounce(async () => {
-    try {
-      if (!nota.id && textarea.value.trim() !== "") {
-        // Cria nota no backend
-        const res = await fetch("http://192.168.1.19:3000/Notas", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ usuario_id, conteudo: textarea.value }),
-        });
-        const novaNota = await res.json();
-        nota.id = novaNota.id; // atualiza id da nota criada
-      } else if (nota.id) {
-        // Atualiza nota existente
-        await fetch(`http://192.168.1.19:3000/Notas/${nota.id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ conteudo: textarea.value }),
-        });
-      }
-    } catch (err) {
-      console.error("Erro ao salvar nota:", err);
+    const usuario_id = localStorage.getItem("id");
+    if (!usuario_id) {
+      alert("Você precisa estar logado para criar ou editar notas!");
+      return;
     }
-  }, 800);
 
-  textarea.addEventListener("input", saveNote);
+    const emptyMsg = notesContainer.querySelector(".empty-msg");
+    if (emptyMsg) emptyMsg.remove();
 
-  const actions = document.createElement("div");
-  actions.classList.add("actions");
+    const note = document.createElement("div");
+    note.classList.add("note");
 
-  const editBtn = document.createElement("button");
-  editBtn.className = "action-btn edit";
-  editBtn.title = "Editar nota";
-  editBtn.textContent = "✏️";
-  editBtn.addEventListener("click", () => textarea.focus()); // só foca
+    const textarea = document.createElement("textarea");
+    textarea.value = nota.conteudo || "";
 
-  const deleteBtn = document.createElement("button");
-  deleteBtn.className = "action-btn delete";
-  deleteBtn.title = "Excluir nota";
-  deleteBtn.textContent = "🗑️";
-  deleteBtn.addEventListener("click", async () => {
-    try {
-      if (!nota.id) return;
-      const res = await fetch(`http://192.168.1.19:3000/Notas/${nota.id}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("Erro ao excluir nota");
-      note.remove();
-
-      if (!notesContainer.querySelector(".note")) {
-        const msg = document.createElement("p");
-        msg.textContent = "Nenhuma nota encontrada.";
-        msg.classList.add("empty-msg");
-        notesContainer.appendChild(msg);
-      }
-    } catch (err) {
-      console.error("Erro ao excluir nota:", err);
+    // Se não estiver logado, desativa o campo
+    if (!usuario_id) {
+      textarea.disabled = true;
     }
-  });
 
-  actions.appendChild(editBtn);
-  actions.appendChild(deleteBtn);
+    const updateNote = debounce(async () => {
+      if (!usuario_id) return;
 
-  note.appendChild(textarea);
-  note.appendChild(actions);
-  notesContainer.appendChild(note);
-}
+      try {
+        // Criação de nova nota
+        if (!nota.id && textarea.value.trim() !== "") {
+          const res = await fetch("http://192.168.1.19:3000/Notas", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              usuario_id,
+              conteudo: textarea.value,
+            }),
+          });
+          const novaNota = await res.json();
+          nota.id = novaNota.id;
+        }
+        // Atualização
+        else if (nota.id) {
+          await fetch(`http://192.168.1.19:3000/Notas/${nota.id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ conteudo: textarea.value }),
+          });
+        }
+      } catch (err) {
+        console.error("Erro ao salvar nota:", err);
+      }
+    }, 800);
 
+    textarea.addEventListener("input", updateNote);
+
+    const actions = document.createElement("div");
+    actions.classList.add("actions");
+
+    const editBtn = document.createElement("button");
+    editBtn.className = "action-btn edit";
+    editBtn.title = "Editar nota";
+    editBtn.textContent = "✏️";
+    editBtn.addEventListener("click", () => {
+      if (usuario_id) textarea.focus();
+    });
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.className = "action-btn delete";
+    deleteBtn.title = "Excluir nota";
+    deleteBtn.textContent = "🗑️";
+    deleteBtn.addEventListener("click", async () => {
+      if (!usuario_id || !nota.id) return;
+
+      try {
+        const res = await fetch(`http://192.168.1.19:3000/Notas/${nota.id}`, {
+          method: "DELETE",
+        });
+        if (!res.ok) throw new Error("Erro ao excluir nota");
+        note.remove();
+
+        if (!notesContainer.querySelector(".note")) {
+          const msg = document.createElement("p");
+          msg.textContent = "Nenhuma nota encontrada.";
+          msg.classList.add("empty-msg");
+          notesContainer.appendChild(msg);
+        }
+      } catch (err) {
+        console.error("Erro ao excluir nota:", err);
+      }
+    });
+
+    actions.appendChild(editBtn);
+    actions.appendChild(deleteBtn);
+
+    note.appendChild(textarea);
+    note.appendChild(actions);
+    notesContainer.appendChild(note);
+  }
 
   addNoteBtn.addEventListener("click", () => {
-    createNote({}); // Cria nota em branco no frontend (será salva só ao digitar)
+    const usuario_id = localStorage.getItem("id");
+    if (!usuario_id) {
+      alert("Você precisa fazer login para criar notas!");
+      return;
+    }
+    createNote({});
   });
 
   async function loadNotes() {
     try {
       const res = await fetch(`http://192.168.1.19:3000/Notas/${usuario_id}`);
-      const data = await res.json();
-
-      const notas = Array.isArray(data) ? data : [];
+      const notas = await res.json();
 
       notesContainer.innerHTML = "";
 
-      if (!notas.length) {
+      if (!notas || notas.length === 0) {
         const msg = document.createElement("p");
         msg.textContent = "Nenhuma nota encontrada.";
         msg.classList.add("empty-msg");

@@ -3,7 +3,7 @@ body{
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color:  #85b5db;
+    background-color:  #ddd4bb;
     min-height: 100vh;
     margin: 0;
 }
@@ -71,7 +71,7 @@ body{
     border-radius: 8px;
     color: #fff;
     border: none;
-    background-color:#3987d0;
+    background-color: #27187e;
     box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.3);
     cursor: pointer;
     display: block;
